@@ -1,4 +1,9 @@
-<div class='codemirror-container' style='{{#height}}height: {{height}};{{/height}}'>
+<div
+	class='codemirror-container'
+	style='{{#height}}height: {{height}};{{/height}}'
+	on-mousemove='highlight(event)'
+	on-click='select(event)'
+>
 	<textarea></textarea>
 </div>
 
@@ -27,6 +32,11 @@
 		left: 1em;
 		top: 1.5em;
 		padding: 0.5em;
+	}
+
+	.highlighted {
+		font-weight: bold;
+		background-color: red;
 	}
 </style>
 
@@ -100,6 +110,7 @@
 			});
 
 			this.editor = editor;
+			window.editor = editor;
 
 			let updating;
 
@@ -156,6 +167,43 @@
 			});
 
 			this.on( 'teardown', () => editor.toTextArea() );
+		},
+
+		indexFromCoords ( coords ) {
+			return this.editor.indexFromPos( this.editor.coordsChar( coords ) );
+		},
+
+		highlight ( event ) {
+			this.fire( 'highlight', this.indexFromCoords({
+				left: event.original.clientX,
+				top: event.original.clientY
+			}));
+		},
+
+		select ( event ) {
+			this.fire( 'select', this.indexFromCoords({
+				left: event.original.clientX,
+				top: event.original.clientY
+			}));
+		},
+
+		highlightRange ( start, end ) {
+			if ( this._marker ) {
+				if ( start === this._marker.start && end === this._marker.end ) {
+					return;
+				}
+
+				this._marker.controller.clear();
+			}
+
+			const startPos = this.editor.posFromIndex( start );
+			const endPos = this.editor.posFromIndex( end );
+
+			this._marker = {
+				start,
+				end,
+				controller: this.editor.markText( startPos, endPos, { className: 'highlighted' })
+			};
 		}
 	};
 </script>

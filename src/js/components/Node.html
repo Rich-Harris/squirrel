@@ -1,13 +1,17 @@
-<div class='node {{#if block}}block{{/if}}'>
+<div class='node {{#if block}}block{{/if}} {{#if highlighted}}highlighted{{/if}}'>
 	{ <button on-click='toggle("expanded")'>{{expanded ? '-' : '+'}}</button>
 		{{#if expanded}}
 			<ul>
 				{{#each keys :i }}
-					<li>{{this}}: <Member
-										member='{{node[this]}}'
-										trailingComma='{{i < keys.length - 1}}'
-										depth='{{depth}}'
-									/></li>
+					<li>
+						{{this}}:
+						<Member
+							member='{{node[this]}}'
+							trailingComma='{{i < keys.length - 1}}'
+							depth='{{depth}}'
+							highlightedId='{{highlightedId}}'
+						/>
+					</li>
 				{{/each}}
 			</ul>
 		{{/if}}
@@ -23,6 +27,11 @@
 		display: block;
 	}
 
+	.highlighted {
+		background-color: #eee;
+		font-weight: bold;
+	}
+
 	ul {
 		padding: 0 0 0 1em;
 		margin: 0;
@@ -33,7 +42,8 @@
 <script>
 	component.exports = {
 		data: {
-			expanded: false
+			expanded: false,
+			highlighted: false
 		},
 
 		computed: {
@@ -44,7 +54,13 @@
 		},
 
 		oninit () {
+			this.id = this.get( 'node._id' );
 			this.set( 'expanded', this.get( 'depth' ) <= 2 );
+
+			this.observe( 'highlightedId', ( n, o ) => {
+
+				this.set( 'highlighted', n === this.id ); // TODO why doesn't this work in the template?
+			});
 		}
 	};
 </script>

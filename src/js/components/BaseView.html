@@ -37,7 +37,12 @@
 </style>
 
 <script>
-	var acorn = window.acorn;
+	const acorn = window.acorn;
+	const walk = require( 'estree-walker' ).walk;
+
+	function frontToBack ( a, b ) {
+		return a.start - b.start || b.end - a.end;
+	}
 
 	component.exports = {
 		oninit () {
@@ -45,18 +50,77 @@
 
 			this.observe( 'input', input => {
 				try {
-					let parsed = acorn.parse( input, {
+					let output = acorn.parse( input, {
 						ecmaVersion: 6,
 						sourceType: 'module'
 					});
 
-					this.set( 'output', parsed );
+					let nodes = [];
+					let parentIds = {};
+					let uid = 1;
+
+					walk( output, {
+						enter: function ( node, parent ) {
+							const id = uid++;
+
+							node._id = id;
+							parentIds[ id ] = parent ? parent._id : null;
+
+							nodes.push( node );
+						}
+					});
+
+					nodes.sort( frontToBack );
+
+					this.set({ nodes, output, parentIds });
 				} catch ( err ) {
 					console.log( 'err', err );
 				}
 
 				localStorage.input = input;
 			});
+
+			this.on({
+				'CodeMirror.highlight': index => {
+					const node = this.getNodeFromIndex( index );
+
+					if ( !node ) {
+						console.log( 'no node' );
+						return;
+					}
+
+					let id = node._id;
+					let nodeComponent;
+
+					while ( id && !nodeComponent ) {
+						nodeComponent = this.nodeQuery.filter( nodeComponent => nodeComponent.id === id )[0];
+						id = this.get( 'parentIds' )[ id ];
+					}
+
+					this.set( 'highlightedId', id );
+					this.findComponent( 'CodeMirror' ).highlightRange( node.start, node.end );
+				}
+			});
+		},
+
+		onrender () {
+			this.nodeQuery = this.findAllComponents( 'Node', { live: true });
+		},
+
+		getNodeFromIndex ( index ) {
+			const nodes = this.get( 'nodes' );
+			const len = nodes.length;
+
+			let i, node;
+			for ( i = 0; i < len; i += 1 ) {
+				if ( nodes[i].start > index ) {
+					break;
+				}
+
+				node = nodes[i];
+			}
+
+			return node;
 		},
 
 		components: {

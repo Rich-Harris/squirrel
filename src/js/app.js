@@ -1,3 +1,3 @@
 import BaseView from './components/BaseView';
 
-new BaseView({ el: 'main' });
+window.view = new BaseView({ el: 'main' });
