@@ -1,0 +1,50 @@
+<div class='node {{#if block}}block{{/if}}'>
+	{ <button on-click='toggle("expanded")'>{{expanded ? '-' : '+'}}</button>
+		{{#if expanded}}
+			<ul>
+				{{#each keys :i }}
+					<li>{{this}}: <Member
+										member='{{node[this]}}'
+										trailingComma='{{i < keys.length - 1}}'
+										depth='{{depth}}'
+									/></li>
+				{{/each}}
+			</ul>
+		{{/if}}
+	}{{#if trailingComma}},{{/if}}
+</div>
+
+<style>
+	.node {
+		display: inline;
+	}
+
+	.node-block {
+		display: block;
+	}
+
+	ul {
+		padding: 0 0 0 1em;
+		margin: 0;
+		list-style: none;
+	}
+</style>
+
+<script>
+	component.exports = {
+		data: {
+			expanded: false
+		},
+
+		computed: {
+			keys () {
+				const node = this.get( 'node' );
+				return Object.keys( node ); // TODO sort
+			}
+		},
+
+		oninit () {
+			this.set( 'expanded', this.get( 'depth' ) <= 2 );
+		}
+	};
+</script>

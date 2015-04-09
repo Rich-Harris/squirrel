@@ -1,0 +1,70 @@
+<div class='app'>
+	<div class='left'>
+		<CodeMirror value='{{input}}'/>
+	</div>
+
+	<div class='right'>
+		<TreeView tree='{{output}}'>
+	</div>
+</div>
+
+
+<style>
+	.app {
+		width: 100%;
+		height: 100%
+	}
+
+	.left, .right {
+		width: 50%;
+		height: 100%;
+		float: left;
+		overflow: auto;
+	}
+
+	.left {
+		padding: 0 0.5em 0 0;
+	}
+
+	.right {
+		padding: 0 0 0 0.5em;
+	}
+
+	textarea {
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+<script>
+	var acorn = window.acorn;
+
+	component.exports = {
+		oninit () {
+			this.set( 'input', localStorage.input || '' );
+
+			this.observe( 'input', input => {
+				try {
+					let parsed = acorn.parse( input, {
+						ecmaVersion: 6,
+						sourceType: 'module'
+					});
+
+					this.set( 'output', parsed );
+				} catch ( err ) {
+					console.log( 'err', err );
+				}
+
+				localStorage.input = input;
+			});
+		},
+
+		components: {
+			CodeMirror: require( './CodeMirror' ),
+			TreeView: require( './TreeView' ),
+			Node: require( './Node' ),
+			NodeList: require( './NodeList' ),
+			Member: require( './Member' )
+		}
+	};
+</script>

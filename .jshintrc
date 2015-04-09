@@ -1,0 +1,10 @@
+{
+	"esnext": true,
+	"undef": true,
+	"unused": true,
+	"globals": {
+		"require": true,
+		"component": true,
+		"document": true
+	}
+}
