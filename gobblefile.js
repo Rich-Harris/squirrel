@@ -4,7 +4,7 @@ var gobble = require( 'gobble' );
 module.exports = gobble([
 
 	// static files
-	gobble( 'src/root' ),
+	gobble( 'src/files' ),
 	gobble( 'node_modules/acorn/dist/acorn.js' ),
 
 	// styles
@@ -12,29 +12,24 @@ module.exports = gobble([
 		.transform( 'sass', { src: 'main.scss', dest: 'main.css' }),
 
 	// javascript
-	gobble( 'src/js' )
+	gobble( 'src/app' )
 		.transform( 'ractive', { type: 'es6' })
-		.transform( 'babel', {
-			whitelist: [
-				'es6.arrowFunctions',
-				'es6.blockScoping',
-				'es6.classes',
-				'es6.constants',
-				'es6.destructuring',
-				'es6.parameters.default',
-				'es6.parameters.rest',
-				'es6.properties.shorthand',
-				'es6.spread',
-				'es6.templateLiterals'
+		.transform( 'rollup-babel', {
+			entry: 'main.js',
+			dest: 'main.js',
+			format: 'cjs',
+			external: [
+				'ractive',
+				'jshint',
+				'codemirror',
+				'codemirror/mode/javascript/javascript',
+				'codemirror/keymap/sublime',
+				'codemirror/addon/search/searchcursor'
 			]
-		})
-		.transform( 'esperanto-bundle', {
-			entry: 'app',
-			type: 'cjs'
 		})
 		.transform( 'derequire' )
 		.transform( 'browserify', {
-			entries: [ './app' ],
+			entries: [ './main' ],
 			dest: 'app.js',
 			debug: true,
 			standalone: 'squirrel'

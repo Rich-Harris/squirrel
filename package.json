@@ -8,13 +8,14 @@
     "start": "gobble"
   },
   "devDependencies": {
-    "gobble": "^0.7.13",
-    "gobble-babel": "^5.0.0",
-    "gobble-browserify": "^0.2.0",
-    "gobble-cli": "^0.3.5",
-    "gobble-derequire": "^0.1.1",
+    "gobble": "^0.10.2",
+    "gobble-babel": "^5.5.8",
+    "gobble-browserify": "^0.6.1",
+    "gobble-cli": "^0.4.2",
+    "gobble-derequire": "^0.1.2",
     "gobble-esperanto-bundle": "^0.1.7",
     "gobble-ractive": "^0.2.0",
+    "gobble-rollup": "^0.4.0",
     "gobble-sass": "^0.4.0"
   },
   "dependencies": {
