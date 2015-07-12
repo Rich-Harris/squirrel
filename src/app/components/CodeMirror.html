@@ -166,7 +166,7 @@
 				updating = false;
 			});
 
-			this.on( 'teardown', () => editor.toTextArea() );
+			this.on( 'unrender', () => editor.toTextArea() );
 		},
 
 		indexFromCoords ( coords ) {
@@ -204,6 +204,12 @@
 				end,
 				controller: this.editor.markText( startPos, endPos, { className: 'highlighted' })
 			};
+
+			console.log( 'startPos', startPos )
+			// this.editor.scrollIntoView({
+			// 	from: startPos,
+			// 	to: endPos
+			// }, 50 );
 		}
 	};
 </script>

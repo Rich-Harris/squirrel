@@ -59,17 +59,11 @@
 					return key[0] !== '_' && key !== 'start' && key !== 'end';
 				});
 
-				console.log( 'keys before', keys )
 				keys.sort( ( a, b ) => {
 					const d = ( keyPriority[a] || 1000 ) - ( keyPriority[b] || 1000 );
 
-					console.log( 'a', a, keyPriority[a] )
-					console.log( 'b', b, keyPriority[b] )
-					console.log( 'd', d )
-
 					return d || ( a < b ? -1 : 1 );
 				});
-				console.log( 'keys after', keys )
 
 				return keys;
 			}
